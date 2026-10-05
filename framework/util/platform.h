@@ -27,6 +27,7 @@
 #include "util/alignment_utils.h"
 #include "util/defines.h"
 
+#include <cctype>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -442,6 +443,26 @@ inline std::string GetEnv(const char* name)
                 *prop             = value;
             },
             &env_value);
+    }
+    else
+    {
+        // Native processes started outside the Android app model (for example Wine on Android) cannot be given
+        // per-process properties, so accept the desktop spelling of an unset option from the environment.
+        const char   prefix[]      = "debug.gfxrecon.";
+        const size_t prefix_length = sizeof(prefix) - 1;
+        if (strncmp(name, prefix, prefix_length) == 0)
+        {
+            std::string env_name = "GFXRECON_";
+            for (const char* c = name + prefix_length; *c != '\0'; ++c)
+            {
+                env_name += static_cast<char>(toupper(static_cast<unsigned char>(*c)));
+            }
+            const char* ret_value = getenv(env_name.c_str());
+            if (nullptr != ret_value)
+            {
+                env_value = ret_value;
+            }
+        }
     }
 #else
     const char* ret_value = getenv(name);

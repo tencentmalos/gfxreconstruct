@@ -96,6 +96,8 @@ GFXRECON_BEGIN_NAMESPACE(encode)
 #define CAPTURE_TRIGGER_FRAMES_UPPER                         "CAPTURE_TRIGGER_FRAMES"
 #define CAPTURE_ANDROID_TRIGGER_LOWER                        "capture_android_trigger"
 #define CAPTURE_ANDROID_TRIGGER_UPPER                        "CAPTURE_ANDROID_TRIGGER"
+#define CAPTURE_TRIGGER_FILE_LOWER                           "capture_trigger_file"
+#define CAPTURE_TRIGGER_FILE_UPPER                           "CAPTURE_TRIGGER_FILE"
 #define CAPTURE_ANDROID_DUMP_ASSETS_LOWER                    "capture_android_dump_assets"
 #define CAPTURE_ANDROID_DUMP_ASSETS_UPPER                    "CAPTURE_ANDROID_DUMP_ASSETS"
 #define CAPTURE_IUNKNOWN_WRAPPING_LOWER                      "capture_iunknown_wrapping"

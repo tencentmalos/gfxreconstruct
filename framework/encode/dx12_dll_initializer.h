@@ -175,6 +175,15 @@ std::string PrepGfxrRuntimesFolder(const std::string& windows_module_root)
 
 std::string SetupCaptureModule(const std::string& dll_name, const std::string& dll_name_renamed)
 {
+    // A Wine prefix can install the capture proxies in place of system32's runtime DLLs. The real runtimes then
+    // cannot be copied from there, so GFXRECON_DX_RUNTIME_DIR names a directory holding them as <dll>_ms.dll.
+    char  runtime_dir[MAX_PATH] = {};
+    DWORD runtime_dir_length    = GetEnvironmentVariableA("GFXRECON_DX_RUNTIME_DIR", runtime_dir, MAX_PATH);
+    if ((runtime_dir_length > 0) && (runtime_dir_length < MAX_PATH))
+    {
+        return std::string(runtime_dir) + util::filepath::kPathSep + dll_name_renamed;
+    }
+
     // First assume we are starting with the "legacy" method with renamed capture binaries
     std::string module_path = dll_name_renamed;
 

@@ -116,6 +116,7 @@ const char kIgnoreFrameBoundaryAndroidEnvVar[]               = GFXRECON_OPTION_S
 const char kSkipThreadsWithInvalidDataEnvVar[]               = GFXRECON_OPTION_STR(SKIP_THREADS_WITH_INVALID_DATA);
 const char kCaptureEnvironmentEnvVar[]                       = GFXRECON_OPTION_STR(CAPTURE_ENVIRONMENT);
 const char kCaptureProcessNameEnvVar[]                       = GFXRECON_OPTION_STR(CAPTURE_PROCESS_NAME);
+const char kCaptureTriggerFileEnvVar[]                       = GFXRECON_OPTION_STR(CAPTURE_TRIGGER_FILE);
 
 #if defined(__ANDROID__)
 // Android-specific capture options
@@ -251,6 +252,22 @@ void CaptureSettings::LoadRunTimeEnvVarSettings(CaptureSettings* settings)
         }
     }
 #endif
+
+    // A trigger file works where the controller cannot change the process environment or Android properties, for
+    // example a Windows application running under Wine on Android: capture is active while the file exists.
+    if (settings != nullptr)
+    {
+        const std::string trigger_file = util::platform::GetEnv(kCaptureTriggerFileEnvVar);
+        if (!trigger_file.empty())
+        {
+            settings->trace_settings_.runtime_capture_trigger =
+                util::filepath::Exists(trigger_file) ? RuntimeTriggerState::kEnabled : RuntimeTriggerState::kDisabled;
+            if (settings->trace_settings_.trim_boundary == TrimBoundary::kUnknown)
+            {
+                settings->trace_settings_.trim_boundary = TrimBoundary::kFrames;
+            }
+        }
+    }
 }
 
 void CaptureSettings::LoadLogSettings(CaptureSettings* settings)
